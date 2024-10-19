@@ -15,7 +15,7 @@
 #![doc = r"     }"]
 #![doc = r" }"]
 #![doc = r" ```"]
-use leptos::*;
+use leptos::prelude::*;
 mod icons;
 pub use icons::*;
 #[doc = r" An icon's weight or style."]
@@ -92,16 +92,16 @@ pub fn Icon(
     #[doc = r" Icon height & width. As with standard React elements,"]
     #[doc = r" this can be a number, or a string with units in"]
     #[doc = r" `px`, `%`, `em`, `rem`, `pt`, `cm`, `mm`, `in`."]
-    # [prop (into , default = TextProp :: from ("1em"))]
-    size: TextProp,
+    # [prop (into , default = MaybeSignal :: Static ("1em" . into ()))]
+    size: MaybeSignal<String>,
     #[doc = r" Icon stroke/fill color."]
     #[doc = r""]
     #[doc = r" This can be any CSS color string, including"]
     #[doc = r" `hex`, `rgb`, `rgba`, `hsl`, `hsla`, named colors,"]
     #[doc = r" or the special `currentColor` variable."]
     #[doc = r""]
-    # [prop (into , default = TextProp :: from ("currentColor"))]
-    color: TextProp,
+    # [prop (into , default = MaybeSignal :: Static ("currentColor" . into ()))]
+    color: MaybeSignal<String>,
     #[doc = r" Flip the icon horizontally."]
     #[doc = r""]
     #[doc = r" This can be useful in RTL languages where normal"]
@@ -110,10 +110,10 @@ pub fn Icon(
     mirrored: MaybeSignal<bool>,
     #[doc = r" The HTML ID of the underlying SVG element."]
     #[prop(into, optional)]
-    id: MaybeProp<TextProp>,
+    id: Option<String>,
     #[doc = r" The CSS class property of the underlying SVG element."]
-    #[prop(into, optional)]
-    class: MaybeProp<TextProp>,
+    # [prop (into , default = MaybeSignal :: Static ("" . into ()))]
+    class: MaybeSignal<String>,
 ) -> impl IntoView {
     let html = move || icon.get(weight.get());
     let transform = move || mirrored.get().then_some("scale(-1, 1)");
@@ -124,11 +124,11 @@ pub fn Icon(
             width=move || size.get()
             height=move || height.get()
             fill=color
-            transform=transform
+            // transform=transform
             viewBox="0 0 256 256"
-            id=move || id.get().map(|id| id.get())
-            class=move || class.get().map(|cls| cls.get())
+            id=id
+            class=move || class.get()
             inner_html=html
-        ></svg>
+        />
     }
 }

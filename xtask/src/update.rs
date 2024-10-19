@@ -55,7 +55,7 @@ exclude = ["/core"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-leptos = "0.6"
+leptos = { version = "0.7.0-gamma3" }
 
 [workspace]
 members = ["xtask"]
@@ -213,7 +213,7 @@ pub fn run() {
         //!     }
         //! }
         //! ```
-        use leptos::*;
+        use leptos::prelude::*;
 
         mod icons;
         pub use icons::*;
@@ -290,7 +290,7 @@ pub fn run() {
             /// Icon height & width. As with standard React elements,
             /// this can be a number, or a string with units in
             /// `px`, `%`, `em`, `rem`, `pt`, `cm`, `mm`, `in`.
-            #[prop(into, default = TextProp::from("1em"))] size: TextProp,
+            #[prop(into, default = MaybeSignal::Static("1em".into()))] size: MaybeSignal<String>,
 
             /// Icon stroke/fill color.
             ///
@@ -298,7 +298,7 @@ pub fn run() {
             /// `hex`, `rgb`, `rgba`, `hsl`, `hsla`, named colors,
             /// or the special `currentColor` variable.
             ///
-            #[prop(into, default = TextProp::from("currentColor"))] color: TextProp,
+            #[prop(into, default = MaybeSignal::Static("currentColor".into()))] color: MaybeSignal<String>,
 
             /// Flip the icon horizontally.
             ///
@@ -307,10 +307,10 @@ pub fn run() {
             #[prop(into, default = MaybeSignal::Static(false))] mirrored: MaybeSignal<bool>,
 
             /// The HTML ID of the underlying SVG element.
-            #[prop(into, optional)] id: MaybeProp<TextProp>,
+            #[prop(into, optional)] id: Option<String>,
 
             /// The CSS class property of the underlying SVG element.
-            #[prop(into, optional)] class: MaybeProp<TextProp>,
+            #[prop(into, default = MaybeSignal::Static("".into()))] class: MaybeSignal<String>,
         ) -> impl IntoView {
             let html = move || icon.get(weight.get());
             let transform = move || mirrored.get().then_some("scale(-1, 1)");
@@ -324,8 +324,8 @@ pub fn run() {
                     fill=color
                     transform=transform
                     viewBox="0 0 256 256"
-                    id=move || id.get().map(|id| id.get())
-                    class=move || class.get().map(|cls| cls.get())
+                    id=id
+                    class=move || class.get()
                     inner_html=html
                 />
             }
